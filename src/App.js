@@ -14,7 +14,8 @@ class App extends Component {
 
     this.state = {
       vehiclesToDisplay: [],
-      buyersToDisplay: []
+      buyersToDisplay: [],
+      baseUrl:"https://joes-autos.herokuapp.com"
     }
 
     this.getVehicles = this.getVehicles.bind(this);
@@ -31,6 +32,13 @@ class App extends Component {
 
   getVehicles() {
     // axios (GET)
+    axios.get(this.state.baseUrl + '/api/vehicles')
+    .then( (response)=>{
+      // put cars here -> state.vehiclesToDisplay
+      this.setState({
+        vehiclesToDisplay: response.data
+      })
+    })
     // setState with response -> vehiclesToDisplay
   }
 
@@ -41,6 +49,12 @@ class App extends Component {
 
   sellCar(id) {
     // axios (DELETE)
+    axios.delete( this.state.baseUrl + '/api/vehicles/' + id)
+    .then( (response)=>{
+      this.setState({
+        vehiclesToDisplay: response.data.vehicles
+      })
+    })
     // setState with response -> vehiclesToDisplay
   }
 
@@ -56,8 +70,14 @@ class App extends Component {
     // setState with response -> vehiclesToDisplay
   }
 
-  updatePrice(priceChange) {
+  updatePrice(id, priceChange) {
     // axios (PUT)
+    axios.put( this.state.baseUrl + '/api/vehicles/' + id + '/' + priceChange )
+    .then( (response)=>{
+      this.setState ({
+        vehiclesToDisplay: response.data.vehicles
+      })
+    })
     // setState with response -> vehiclesToDisplay
   }
 
@@ -70,6 +90,12 @@ class App extends Component {
     price: this.refs.price.value
   }  
   // axios (POST)
+  axios.post(this.state.baseUrl + '/api/vehicles', newCar)
+  .then( (response)=>{
+    this.setState({
+      vehiclesToDisplay: response.data.vehicles
+    })
+  })
   // setState with response -> vehiclesToDisplay
 }
 
@@ -126,11 +152,11 @@ resetData(dataToReset) {
           <p>Price: { v.price }</p>
           <button
             className='btn btn-sp'
-            onClick={ () => this.updatePrice('up') }
+            onClick={ () => this.updatePrice( v.id, 'up') }
             >Increase Price</button>
           <button
             className='btn btn-sp'
-            onClick={ () => this.updatePrice('down') }
+            onClick={ () => this.updatePrice( v.id, 'down') }
             >Decrease Price</button>  
           <button 
             className='btn btn-sp'
